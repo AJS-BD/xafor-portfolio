@@ -80,7 +80,10 @@
   }
   nav a{pointer-events:auto}
   .nav-logo{font-size:22px;font-weight:800;letter-spacing:-.04em;line-height:1}
-  .nav-logo sup{font-size:10px;font-weight:600}
+  .nav-logo sup{
+    display:inline-block;font-size:.42em;font-weight:700;line-height:1;
+    vertical-align:baseline;position:relative;top:-1em;margin-left:.14em;
+  }
   .nav-links{display:flex;gap:30px}
   .nav-links a{
     font-size:15px;font-weight:600;letter-spacing:-.01em;
@@ -136,7 +139,10 @@
     padding:6px 8px 14px;
     user-select:none;will-change:transform;
   }
-  .wordmark sup{font-size:.15em;font-weight:700;letter-spacing:0}
+  .wordmark sup{
+    display:inline-block;font-size:.135em;font-weight:700;letter-spacing:0;line-height:1;
+    vertical-align:baseline;position:relative;top:-4.55em;margin-left:.28em;
+  }
   .wordmark .ch{display:inline-block;animation:riseIn 1.1s cubic-bezier(.22,1,.36,1) both}
   @keyframes riseIn{
     from{transform:translateY(115%);color:var(--mark-dim)}
@@ -379,7 +385,10 @@
     font-size:clamp(84px,19.5vw,330px);transform:translateY(16%);
     user-select:none;
   }
-  .foot-mark sup{font-size:.15em;font-weight:700}
+  .foot-mark sup{
+    display:inline-block;font-size:.135em;font-weight:700;letter-spacing:0;line-height:1;
+    vertical-align:baseline;position:relative;top:-4.55em;margin-left:.28em;
+  }
 
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}
@@ -794,14 +803,19 @@
   if (wm && !reduced) {
     var sup = wm.querySelector("sup");
     wm.innerHTML = "";
+    var lastCh = null;
     "XAFOR".split("").forEach(function(ch, i){
       var s = document.createElement("span");
       s.className = "ch";
       s.textContent = ch;
       s.style.animationDelay = (0.15 + i * 0.08) + "s";
       wm.appendChild(s);
+      lastCh = s;
     });
-    if (sup) wm.appendChild(sup);
+    /* ® rides inside the R's animated span, so it rises on the R's
+       timing (0.15 + 4*0.08s) as a superscript, not a full-size letter */
+    if (sup && lastCh) lastCh.appendChild(sup);
+    else if (sup) wm.appendChild(sup);
   }
 
   /* ---- Section headings: word-by-word clipped rise ---- */
@@ -812,19 +826,18 @@
   if (fm) {
     var fsup = fm.querySelector("sup");
     fm.innerHTML = "";
+    var lastWw = null;
     "XAFOR".split("").forEach(function(ch, i){
       var wl = document.createElement("span"); wl.className = "wl";
       var ww = document.createElement("span"); ww.className = "ww";
       ww.textContent = ch;
       ww.style.transitionDelay = (i * 0.07) + "s";
       wl.appendChild(ww); fm.appendChild(wl);
+      lastWw = ww;
     });
-    if (fsup) {
-      var swl = document.createElement("span"); swl.className = "wl";
-      var sww = document.createElement("span"); sww.className = "ww";
-      sww.style.transitionDelay = "0.35s";
-      sww.appendChild(fsup); swl.appendChild(sww); fm.appendChild(swl);
-    }
+    /* ® rides inside the R's clipped span, sharing its rise timing
+       and baseline so the superscript sits at the top of the R */
+    if (fsup && lastWw) lastWw.appendChild(fsup);
   }
 
   /* ---- Manifesto: split into word spans for the scroll fill ---- */
